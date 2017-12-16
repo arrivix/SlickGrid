@@ -16,7 +16,8 @@
         "YesNoSelect": YesNoSelectEditor,
         "Checkbox": CheckboxEditor,
         "PercentComplete": PercentCompleteEditor,
-        "LongText": LongTextEditor
+        "LongText": LongTextEditor,
+		"List": ListEditor
       }
     }
   });
@@ -622,6 +623,75 @@
     };
 
     this.validate = function () {
+      if (args.column.validator) {
+        var validationResults = args.column.validator($input.val());
+        if (!validationResults.valid) {
+          return validationResults;
+        }
+      }
+
+      return {
+        valid: true,
+        msg: null
+      };
+    };
+
+    this.init();
+  };
+  
+  function ListEditor(args) {
+    var $input;
+    var defaultValue;
+    var scope = this;
+
+    this.init = function () {
+      $input = $("<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
+
+      $input.on("keydown.nav", function (e) {
+        if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {
+          e.stopImmediatePropagation();
+        }
+      });
+
+      $input.appendTo(args.container);
+      $input.focus().select();
+    };
+
+    this.destroy = function () {
+      $input.remove();
+    };
+
+    this.focus = function () {
+      $input.focus();
+    };
+
+    this.loadValue = function (item) {
+      defaultValue = item[args.column.field];
+      $input.val(defaultValue);
+      $input[0].defaultValue = defaultValue;
+      $input.select();
+    };
+
+    this.serializeValue = function () {
+      return parseInt($input.val(), 10) || 0;
+    };
+
+    this.applyValue = function (item, state) {
+      item[args.column.field] = state;
+    };
+
+    this.isValueChanged = function () {
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+    };
+
+    this.validate = function () {
+      if (isNaN($input.val())) {
+        return {
+          valid: false,
+          msg: "Please enter a valid integer"
+        };
+      }
+
       if (args.column.validator) {
         var validationResults = args.column.validator($input.val());
         if (!validationResults.valid) {
