@@ -358,9 +358,10 @@
     var $select;
     var defaultValue;
     var scope = this;
+	var datalist;
 
     this.init = function () {
-      $select = $("<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
+      $select = $("<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT><SELECT tabIndex='1' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
       $select.appendTo(args.container);
       $select.focus();
     };
@@ -640,40 +641,57 @@
   };
   
   function ListEditor(args) {
-    var $input;
+    var $select, $wrapper;
     var defaultValue;
     var scope = this;
-
+	var level = 1;
+	var result = [];
+	//var oSelects = document.querySelectorAll('select');
     this.init = function () {
-      $input = $("<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
+		var $container = $("body");
+		$wrapper = $("<DIV style='z-index:10000;position:absolute;background:white;padding:5px;border:3px solid gray; -moz-border-radius:10px; border-radius:10px;'/>")
+          .appendTo($container);
+		$a=$("<DIV><h1>titre</h1><p>");
+		$a.appendTo($wrapper);
+		$select = $("<select id='sel_1'><OPTION value='1'>MRCA</OPTION><OPTION value='2'>Qualivie</OPTION><OPTION value='3'>DAC</OPTION></DIV>");
+		$select.appendTo($wrapper);
+      	  $select.on("keydown", this.handleKeyDown);
+		scope.position(args.position);
+		$select.focus();	
+      //$wrapper.appendTo(args.container);
+      //oSelects = document.querySelectorAll('select');
+     /* i, nb = oSelects.length;
+  // affectation de la fonction sur le onchange
+  for( i = 0; i < nb; i += 1) {
+    oSelects[i].onchange = function() {
+        chainSelect(this);
+      };
 
-      $input.on("keydown.nav", function (e) {
-        if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {
-          e.stopImmediatePropagation();
-        }
-      });
-
-      $input.appendTo(args.container);
-      $input.focus().select();
+  };
+  // init du 1st select
+  if( nb){
+    chainSelect('init');
+  }*/
     };
 
     this.destroy = function () {
-      $input.remove();
+      $wrapper.remove();
     };
 
     this.focus = function () {
-      $input.focus();
+
+      $select.focus();	
     };
 
     this.loadValue = function (item) {
       defaultValue = item[args.column.field];
-      $input.val(defaultValue);
-      $input[0].defaultValue = defaultValue;
-      $input.select();
+      $select.val(defaultValue);
+      $select[0].defaultValue = defaultValue;
+      $select.select();
     };
 
     this.serializeValue = function () {
-      return parseInt($input.val(), 10) || 0;
+      return $select.val();
     };
 
     this.applyValue = function (item, state) {
@@ -681,11 +699,30 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($select.val() == "" && defaultValue == null)) && ($select.val() != defaultValue);
     };
-
+	
+    this.position = function (position) {
+      $wrapper
+          .css("top", position.top - 5)
+          .css("left", position.left - 5)
+    };
+	this.handleKeyDown = function (e) {
+      if (e.which == $.ui.keyCode.ENTER) {
+        scope.newselect();
+      } else if (e.which == $.ui.keyCode.ESCAPE) {
+        e.preventDefault();
+        scope.cancel();
+      } else if (e.which == $.ui.keyCode.TAB && e.shiftKey) {
+        e.preventDefault();
+        args.grid.navigatePrev();
+      } else if (e.which == $.ui.keyCode.TAB) {
+        e.preventDefault();
+        args.grid.navigateNext();
+      }
+    };
     this.validate = function () {
-      if (isNaN($input.val())) {
+      if (isNaN($select.val())) {
         return {
           valid: false,
           msg: "Please enter a valid integer"
@@ -693,7 +730,7 @@
       }
 
       if (args.column.validator) {
-        var validationResults = args.column.validator($input.val());
+        var validationResults = args.column.validator($select.val());
         if (!validationResults.valid) {
           return validationResults;
         }
@@ -701,8 +738,20 @@
 
       return {
         valid: true,
-        msg: null
+        msg: 'cool'
       };
+    };
+	this.cancel = function () {
+      $select.val(defaultValue);
+      args.cancelChanges();
+    };
+	this.newselect = function () {
+	 //$select.appendTo($wrapper);
+	 result[0]=$select.val();
+	 
+	 $select= $("<select id='sel_2'><OPTION value='1'>METRO</OPTION><OPTION value='2'>BOULOT</OPTION><OPTION value='3'>DODO</OPTION></DIV>");
+	 $select.appendTo($wrapper);
+	 alert("done");
     };
 
     this.init();
