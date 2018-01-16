@@ -11,6 +11,7 @@
       "Editors": {
         "Text": TextEditor,
         "Integer": IntegerEditor,
+		"Monetic": MoneticEditor,
         "Float": FloatEditor,
         "Date": DateEditor,
         "YesNoSelect": YesNoSelectEditor,
@@ -160,6 +161,109 @@
     this.init();
   }
 
+  function MoneticEditor(args) {
+   var $input;
+    var defaultValue;
+    var scope = this;
+
+    this.init = function () {
+      $input = $("<INPUT type=text class='editor-text' style='text-align:right'/>");
+
+      $input.on("keydown.nav", function (e) {
+        if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {
+          e.stopImmediatePropagation();
+        }
+      });
+
+      $input.appendTo(args.container);
+      $input.focus().select();
+    };
+
+    this.destroy = function () {
+      $input.remove();
+    };
+
+    this.focus = function () {
+      $input.focus();
+    };
+
+    function getDecimalPlaces() {
+        // returns the number of fixed decimal places or null
+        var rtn = args.column.editorFixedDecimalPlaces;
+        if (typeof rtn == 'undefined') {
+            rtn = FloatEditor.DefaultDecimalPlaces;
+        }
+        return (!rtn && rtn!==0 ? null : rtn);
+    }
+
+    this.loadValue = function (item) {
+      defaultValue = item[args.column.field];
+
+      var decPlaces = getDecimalPlaces();
+      if (decPlaces !== null
+      && (defaultValue || defaultValue===0)
+      && defaultValue.toFixed) {
+        defaultValue = defaultValue.toFixed(decPlaces);
+      }
+
+      $input.val(defaultValue);
+      $input[0].defaultValue = defaultValue;
+      $input.select();
+    };
+
+    this.serializeValue = function () {
+      var rtn = parseFloat($input.val());
+      if (FloatEditor.AllowEmptyValue) {
+        if (!rtn && rtn !==0) { rtn = ''; }
+      } else {
+        rtn |= 0;
+      }
+      
+      var decPlaces = getDecimalPlaces();
+      if (decPlaces !== null
+      && (rtn || rtn===0)
+      && rtn.toFixed) {
+        rtn = parseFloat(rtn.toFixed(decPlaces));
+      }
+
+      return rtn;
+    };
+
+    this.applyValue = function (item, state) {
+      item[args.column.field] = state;
+    };
+
+    this.isValueChanged = function () {
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+    };
+
+    this.validate = function () {
+      if (isNaN($input.val())) {
+        return {
+          valid: false,
+          msg: "Please enter a valid number"
+        };
+      }
+
+      if (args.column.validator) {
+        var validationResults = args.column.validator($input.val());
+        if (!validationResults.valid) {
+          return validationResults;
+        }
+      }
+
+      return {
+        valid: true,
+        msg: null
+      };
+    };
+
+    this.init();
+  }
+
+  MoneticEditor.DefaultDecimalPlaces = 2;
+  MoneticEditor.AllowEmptyValue = false;
+  
   function FloatEditor(args) {
     var $input;
     var defaultValue;
@@ -275,6 +379,16 @@
       $input.focus().select();
       $input.datepicker({
         showOn: "button",
+		showMonthAfterYear: true,
+		dateFormat: "yy-mm-dd",
+		dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi",],
+		dayNamesShort: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+		dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+		monthNames: ["Janvier", "F&eacute;vrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+		monthNamesShort: ["Jan", "F&eacute;v", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "D&eacute;c"],
+		numberOfMonths: [1,2],
+		showCurrentAtPos: 1,
+		firstDay: 1,
         buttonImageOnly: true,
          beforeShow: function () {
           calendarOpen = true

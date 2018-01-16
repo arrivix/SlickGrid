@@ -1,12 +1,26 @@
-<!DOCTYPE HTML>
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DELANNOY
+ * Date: 07/01/2018
+ * Time: 18:11
+ */
+require_once ('\config\db_action.php');
+
+$db = DB_action::get_instance();
+$result = $db -> get_db_select('ligne_compte',['ID(ID_ligne)', 'Fournisseur', 'Designation', 'Num_BC', 'Montant_HT', 'ID_ligne(Ligne)', 'Date_imputation(Date_imput)', 'Etat']);
+//print_r ($result);
+$json= json_encode($result);
+//echo $json;
+$a='<!DOCTYPE HTML>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
   <title>SlickGrid example 3: Editing</title>
-  <link rel="stylesheet" href="../slick.grid.css" type="text/css"/>
-  <link rel="stylesheet" href="../css/smoothness/jquery-ui-1.11.3.custom.css" type="text/css"/>
-  <link rel="stylesheet" href="examples.css" type="text/css"/>
+  <link rel="stylesheet" href="../edsa-Slickgrid/slick.grid.css" type="text/css"/>
+  <link rel="stylesheet" href="../edsa-Slickgrid/css/smoothness/jquery-ui-1.11.3.custom.css" type="text/css"/>
+  <link rel="stylesheet" href="../edsa-Slickgrid/examples/examples.css" type="text/css"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
   <style>
@@ -169,28 +183,11 @@
                 </div>
             </div>
         </div>
-        <div name="val_block" style="display: block;
-    /* width: 100px; */
-    right: 20px;
-    /* float: right; */
-    text-align: right;
-    background-color: #96cc96;
-    position: absolute;
-    font-size: 20pt;
-    color: white;
-    padding: 20px;
-    z-index: 1;">
-            <span id="ligne_edite" style="font-size:12pt">nb de ligne chargé</span><br>
-            <span style="font-size:12pt">s avant rechargement</span>
-			<button onclick="modify_data()">javascript</button>
-			<button onclick="lock=[4,3,10, 23]; grid.invalidate(); grid.render()">rouge</button>
-			
-        </div>
         <div class="col-sm-9 col-md-9">
-            <div class="well"></div>
-
-
-                    <div style="position:relative">
+            <div class="well">
+                <h1>
+                    Accordion Menu With Icon</h1>
+                <div style="position:relative">
 <h2>Demonstrates:</h2>
 
 
@@ -198,7 +195,7 @@
 <form name="frm" id="frm" action="execresult.php" method="POST">
 <fieldset style="float:left; height:60px; width:100% ">
     <legend name="id" style="font-family:times new roman; font-size:17px;">Nouvelle ligne:</legend>
-<!--Début du tableau-->
+<!--DÃ©but du tableau-->
 <table>
 <tr><td><label style="font-size:14px">Date:</label></td> <td><input type="text" name="date" size="10" value=""/></td>
     <td style="padding:10px 5px;"><label style="font-size:14px">Soci&eacute;t&eacute;:</label></td>
@@ -208,7 +205,7 @@
 </table>
 </fieldset>
 </form>
-<div class="ui-widget-content slick-row even new-row active" style="top:-80px; background=red"><div class="slick-cell l0 r0 cell-title"></div><div class="slick-cell l1 r1 cell-title"></div><div class="slick-cell l2 r2"></div><div class="slick-cell l3 r3"></div><div class="slick-cell l4 r4"></div><div class="slick-cell l5 r5"></div><div class="slick-cell l6 r6 active editable"><input type="text" class="editor-text hasDatepicker" id="dp1515528457315" style="width: 47px;"><img class="ui-datepicker-trigger" src="" alt="..." title="..."></div><div class="slick-cell l7 r7"></div></div>
+
     <div id="myGrid" style="width:100%;height:500px;"></div>
   </div>
 
@@ -221,49 +218,25 @@
 </div>
 
 
-<script src="../lib/firebugx.js"></script>
+<script src="../edsa-Slickgrid/lib/firebugx.js"></script>
 
-<script src="../lib/jquery-3.2.1.js"></script>
-<script src="../lib/jquery-ui-1.11.3.min.js"></script>
-<script src="../lib/jquery.event.drag-2.3.0.js"></script>
+<script src="../edsa-Slickgrid/lib/jquery-3.2.1.js"></script>
+<script src="../edsa-Slickgrid/lib/jquery-ui-1.11.3.min.js"></script>
+<script src="../edsa-Slickgrid/lib/jquery.event.drag-2.3.0.js"></script>
 
-<script src="../slick.core.js"></script>
-<script src="../plugins/slick.cellrangedecorator.js"></script>
-<script src="../plugins/slick.cellrangeselector.js"></script>
-<script src="../plugins/slick.cellselectionmodel.js"></script>
-<script src="../slick.formatters.js"></script>
-<script src="../slick.editors.js"></script>
-<script src="../slick.grid.js"></script>
-<script src="../lib/slick.autocolumnsize.js"></script>
+<script src="../edsa-Slickgrid/slick.core.js"></script>
+<script src="../edsa-Slickgrid/plugins/slick.cellrangedecorator.js"></script>
+<script src="../edsa-Slickgrid/plugins/slick.cellrangeselector.js"></script>
+<script src="../edsa-Slickgrid/plugins/slick.cellselectionmodel.js"></script>
+<script src="../edsa-Slickgrid/slick.formatters.js"></script>
+<script src="../edsa-Slickgrid/slick.editors.js"></script>
+<script src="../edsa-Slickgrid/slick.grid.js"></script>
+<script src="../edsa-Slickgrid/lib/slick.autocolumnsize.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
 
 
-function modify_data(){
-var i, j, d = [], item;
-for (i =  0, j = data.length; i<j; i++){
-item = data[i];
-if (item["ID_ligne"]==5){
-break};
-}
-
-d["ID_ligne"] = 5;
-d["Designation"] = "J'essage un truc"+i;
-d["Fournisseur"] = "voili voilou";
-d["Num_BC"] = Math.round(Math.random() * 100000);
-d["Montant_HT"] = Math.round(Math.random() * 1000);
-d["Ligne"] = Math.round(Math.random() * 300);
-d["Date_imput"] = "09/07/2017";
-d["Etat"] = Math.round(Math.random() * 3)
-
-data[i]=d;
-
-grid.invalidateRow(5);
-       grid.updateRowCount();
-        grid.render();
-
-}
 
   function requiredFieldValidator(value) {
     if (value == null || value == undefined || !value.length) {
@@ -272,25 +245,17 @@ grid.invalidateRow(5);
       return {valid: true, msg: null};
     }
   }
-  function validDateFormat(value){
-  
-  }
-	var lock =[4, 6	];
-	
-//cette fonction bloque la modification de ligne qui sont en cours de modification par une 
-	
 
-
-  var grid, isAsc = true, currentSortCol = { id: "title" };
+  var grid, isAsc = true, currentSortCol = { id: "ID_ligne" };
   var data = [];
   var columns = [
-	{id: "ID_ligne", name: "ID", field: "ID_ligne", width: 60	, cssClass: "cell-title", selectable:false, sortable: true, editable: false},
-    {id: "Designation", name: "Désignation", field: "Designation", width: 150, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true},
+	{id: "ID_ligne", name: "ID", field: "ID_ligne", width: 150, cssClass: "cell-title", editor: Slick.Editors.Integer,  sortable: true, editable: false},
+    {id: "Designation", name: "DÃ©signation", field: "Designation", width: 150, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true},
     {id: "Fournisseur", name: "Fournisseur", field: "Fournisseur", width: 150, editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true},
-    {id: "Num_BC", name: "N° de Bon de Commande", field: "Num_BC", editor: Slick.Editors.Integer, sortable: true},
+    {id: "Num_BC", name: "NÂ° de Bon de Commande", field: "Num_BC", editor: Slick.Editors.Integer, sortable: true},
     {id: "Montant_HT", name: "Montant HT", field: "Montant_HT", width: 80, resizable: false, editor: Slick.Editors.Integer, sortable: true},
     {id: "Ligne", name: "Ligne", field: "Ligne", minWidth: 60, editor: Slick.Editors.Integer,sortable: true},
-	{id: "Date_imput", name:"Date d'imputation", field: "Date_imput", minWidth: 60, editor: Slick.Editors.Date,sortable: true},
+	{id: "Date_imput", name:"Date d\'imputation", field: "Date_imput", minWidth: 60, editor: Slick.Editors.Date,sortable: true},
     {id: "Etat", name: "Etat", field: "Etat", minWidth: 60, editor: Slick.Editors.Integer,sortable: true},
   ];
   var options = {
@@ -298,44 +263,17 @@ grid.invalidateRow(5);
     enableAddRow: true,
     enableCellNavigation: true,
     asyncEditorLoading: false,
-    autoEdit: true,
+    autoEdit: false,
 	forceFitColumns: true,
 	rowHeight: 25,
 	multiColumnSort: true,
   };
 
   $(function () {
-    for (var i = 0; i < 250000; i++) {
-      var d = (data[i] = {});
-
-      d["ID_ligne"] = i;
-      d["Designation"] = "Designation"+i;
-      d["Fournisseur"] = "Popo le haricot";
-      d["Num_BC"] = Math.round(Math.random() * 100000);
-      d["Montant_HT"] = Math.round(Math.random() * 1000);
-      d["Ligne"] = Math.round(Math.random() * 300);
-      d["Date_imput"] = "01/04/2017";
-	  d["Etat"] = Math.round(Math.random() * 3)
-    }
-data.getItemMetadata = function (row) {
-if (typeof this[row] !== 'undefined'){
-for (var i = 0, j= lock.length; i<j; i++) {
-    if (this[row].ID_ligne == lock[i]){
-        return {
-            cssClasses: 'highlight'
-
-        };
-
-    }
-	}
-}
-    return null;
-
-}
-    grid = new Slick.Grid("#myGrid",  data, columns, options);
-		  
+    data=';
+$b=',
+grid = new Slick.Grid("#myGrid",  data, columns, options);
     grid.setSelectionModel(new Slick.CellSelectionModel());
-	
 	grid.onSort.subscribe(function (e, args) {
       var cols = args.sortCols;
       data.sort(function (dataRow1, dataRow2) {
@@ -352,22 +290,8 @@ for (var i = 0, j= lock.length; i<j; i++) {
       });
       grid.invalidate();
       grid.render();
-
 	 });
-	 grid.onBeforeEditCell.subscribe(function(e, args){
-	 a=args.row;
-	 $('#ligne_edite').html('la ligne est la numéro '+data[args.row]['ID_ligne']);
-	  for (var i = 0, j= lock.length; i<j; i++) {
-		if (typeof (data[a])!== 'undefined'){
-		if (lock[i]==data[a]["ID_ligne"])
-	  return false;
-	  }}
-	  });
-	  
-	  
-    //event handling code.
-});
-  
+  })
 	//grid.registerPlugin( new Slick.AutoColumnSize());
 
 	 
@@ -380,32 +304,32 @@ for (var i = 0, j= lock.length; i<j; i++) {
    */
   
   /*function attachAutoResizeDataGrid(grid, gridId, gridContainerId) {
-		var gridDomElm = $('#' + gridId);
-		if (!gridDomElm || typeof gridDomElm.offset() === "undefined") {
-			// if we can't find the grid to resize, return without attaching anything
-			return null;
-		}
+		var gridDomElm = $(\'#\' + gridId);
+		if (!gridDomElm || typeof gridDomElm . offset() === "undefined") {
+    // if we can\'t find the grid to resize, return without attaching anything
+    return null;
+}
 		//-- 1st resize the datagrid size on first load (because the onResize is not triggered on first page load)
 		resizeToFitBrowserWindow(grid, gridId, gridContainerId);
 		//-- 2nd attach a trigger on the Window DOM element, so that it happens also when resizing after first load
-		$(window).on("resize", function () {
-			// for some yet unknown reason, calling the resize twice removes any stuttering/flickering when changing the height and makes it much smoother
-			resizeToFitBrowserWindow(grid, gridId, gridContainerId);
-			resizeToFitBrowserWindow(grid, gridId, gridContainerId);
-		});
+		$(window) . on("resize", function () {
+            // for some yet unknown reason, calling the resize twice removes any stuttering/flickering when changing the height and makes it much smoother
+            resizeToFitBrowserWindow(grid, gridId, gridContainerId);
+            resizeToFitBrowserWindow(grid, gridId, gridContainerId);
+        });
 		// in a SPA (Single Page App) environment you SHOULD also call the destroyAutoResize()
   }
-	/* destroy the resizer when user leaves the page 
+	/* destroy the resizer when user leaves the page
 	function destroyAutoResize() {
-		$(window).trigger('resize').off('resize');
+		$(window).trigger(\'resize\').off(\'resize\');
 	}
 	/**
 	* Private function, calculate the datagrid new height/width from the available space, also consider that a % factor might be applied to calculation
 	* object gridOptions
-	
+
 	function calculateGridNewDimensions(gridId, gridContainerId) {
-		var availableHeight = $(window).height() - $('#' + gridId).offset().top - DATAGRID_BOTTOM_PADDING;
-		var availableWidth = $('#' + gridContainerId).width();
+		var availableHeight = $(window).height() - $(\'#\' + gridId).offset().top - DATAGRID_BOTTOM_PADDING;
+		var availableWidth = $(\'#\' + gridContainerId).width();
 		var newHeight = availableHeight;
 		var newWidth = availableWidth;
 		// we want to keep a minimum datagrid size, apply these minimum if required
@@ -420,22 +344,25 @@ for (var i = 0, j= lock.length; i<j; i++) {
 			width: newWidth
 		};
 	}
-	/** resize the datagrid to fit the browser height & width 
+	/** resize the datagrid to fit the browser height & width
 	function resizeToFitBrowserWindow(grid, gridId, gridContainerId) {
 		// calculate new available sizes but with minimum height of 220px
 		var newSizes = calculateGridNewDimensions(gridId, gridContainerId);
 		if (newSizes) {
 			// apply these new height/width to the datagrid
-			$('#' + gridId).height(newSizes.height);
-			$('#' + gridId).width(newSizes.width);
+			$(\'#\' + gridId).height(newSizes.height);
+			$(\'#\' + gridId).width(newSizes.width);
 			// resize the slickgrid canvas on all browser except some IE versions
 			// exclude all IE below IE11
-			if (new RegExp('MSIE [6-8]').exec(navigator.userAgent) === null && grid) {
+			if (new RegExp(\'MSIE [6-8]\').exec(navigator.userAgent) === null && grid) {
 				grid.resizeCanvas();
 			}
 		}
 	}
 	*/
-</script>
-</body>
-</html>
+</script >
+</body >
+</html >';
+echo("{$a}{$json}{$b}");
+
+?>

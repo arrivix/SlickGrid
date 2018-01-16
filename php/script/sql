@@ -1,0 +1,94 @@
+BEGIN
+Declare IDnewuser INT(11);
+Declare IDolduser INT(11);
+Declare Author INT(11);
+DECLARE msg VARCHAR(1000);
+DECLARE item VARCHAR(30);
+Declare Nameuser VARCHAR(30);
+DECLARE newhisto VARCHAR(300);
+DECLARE sep VARCHAR(5);
+Declare limite_generale DECIMAL(10,2);
+Declare limite_ligne DECIMAL(10,2);
+Declare limite_tot DECIMAL(10,2);
+Declare budget DECIMAL(10,2);
+
+
+SET NEW.Create_date=OLD.Create_date;
+SET NEW.Modification_date=OLD.Modification_date;
+SET NEW.Validation_date=OLD.Validation_date;
+SET NEW.Verrouill_date=OLD.Verrouill_date;
+
+
+
+SET item = 'ligne_compte';
+
+SET IDolduser = OLD.Create_user;
+SET Author = (select MIN(ID) from compte_urafpa.utilis_gestion where Item = item AND ID_gestionnaire = IDnewuser);
+SET IDolduser = OLD.Create_user;
+SET limite_generale = (select Limite from compte_urafpa.limite_generale where ID = 1);
+SET limite_ligne = (select limite_part from compte_urafpa.ligne_limite_part where ID_ligne_budget = NEW.ID_ligne);
+SET budget = (select Montant_restant from compte_urafpa.total_classe_solde where ID_ligne = NEW.ID_ligne);
+IF limite_ligne IS NULL THEN
+  SET limite_tot=limite_generale;
+ELSE SET limite_tot=limite_ligne;
+  END IF;
+
+
+IF (NEW.Montant_HT>(budget+limite_tot+OLD.Montant_HT)) THEN
+  SET msg= CONCAT('NON AUTORISE : il ne reste plus que ',budget, ' sur cette ligne. La ligne a été basculée en erreur disponible 10j.');
+  signal sqlstate '45000' SET MESSAGE_TEXT = msg;
+END IF;
+
+SET Nameuser = SUBSTRING_INDEX(USER(),'@',1);
+
+IF (Nameuser = 'root' AND NEW.Modification_user IS NULL) THEN
+  SET msg= ('Aucune information d utilisateur n a été renseigné. Veuillez vérifier l instruction envoyée.');
+  signal sqlstate '45000' SET MESSAGE_TEXT = msg;
+ELSEIF (Nameuser = 'root') THEN
+  SET IDnewuser = NEW.Modification_user;
+ELSE
+  SET IDnewuser = (select ID_User from compte_urafpa.utilis_compte where login = Nameuser);
+END IF;
+
+  IF IDnewuser IS NULL THEN
+    SET msg= ('Seul un utilisateur autorisé peut modifier cette ligne, veuillez vous reconnecter avec un compte autorisé.');
+    signal sqlstate '45000' SET MESSAGE_TEXT = msg;
+  ELSEIF (OLD.Create_user=IDnewuser OR Author IS NOT NULL) Then
+    SET sep = '';
+    SET newhisto = '';
+    IF NEW.Fournisseur<>OLD.Fournisseur THEN
+      SET newhisto = CONCAT(newhisto, sep, 'Fournisseur : ', OLD.Fournisseur, '->', NEW.Fournisseur);
+      SET sep = ' ; ';
+    END IF;
+    IF NEW.Designation<>OLD.Designation THEN
+      SET newhisto = CONCAT(newhisto, sep, 'Designation : ', OLD.Designation, '->', NEW.Designation);
+      SET sep = ' ; ';
+    END IF;
+    IF NEW.Montant_HT<>OLD.Montant_HT THEN
+      SET newhisto = CONCAT(newhisto, sep, 'Montant H.T. : ', OLD.Montant_HT, '->', NEW.Montant_HT);
+      SET sep = ' ; ';
+    END IF;
+    IF NEW.Etat<>OLD.Etat THEN
+      SET newhisto = CONCAT(newhisto, sep, 'Etat : ', OLD.Etat, '->', NEW.Etat);
+      SET sep = ' ; ';
+    END IF;
+    SET NEW.Create_user= OLD.create_user;
+    SET NEW.Create_date= OLD.create_date;
+    IF sep = '' THEN
+      SET NEW.Modification_user=NULL;
+      SET NEW.Modification_date=NULL;
+
+    ELSE	SET newhisto = CONCAT(CURRENT_DATE, ' : Modifications des champs ', newhisto, '. ', "[", Nameuser, "]", OLD.Historique);
+      SET NEW.Historique = newhisto;
+    END IF;
+  ELSEIF Author IS NULL THEN
+    signal sqlstate '45000' SET MESSAGE_TEXT = 'ERREUR: pas de possibilité d"administration';
+  END IF;
+  IF (NEW.Montant_HT>OLD.Montant_HT) THEN
+      IF (NEW.Montant_HT>(budget+OLD.Montant_HT+limite_tot)) THEN
+        SET msg= CONCAT('NON AUTORISE : il ne reste plus que ',budget, ' sur cette ligne. La modification est supprimée.');
+        signal sqlstate '45000' SET MESSAGE_TEXT = msg;
+      END IF;
+  END IF;
+
+END

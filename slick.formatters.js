@@ -17,7 +17,8 @@
         "PercentCompleteBar": PercentCompleteBarFormatter,
         "YesNo": YesNoFormatter,
         "Checkmark": CheckmarkFormatter,
-        "Checkbox": CheckboxFormatter
+        "Checkbox": CheckboxFormatter,
+          "Monetic": MoneticFormatter
 
       }
     }
@@ -61,5 +62,13 @@
 
   function CheckmarkFormatter(row, cell, value, columnDef, dataContext) {
     return value ? "<img src='../images/tick.png'>" : "";
+  }
+
+  function MoneticFormatter(row, cell, value, columnDef, dataContext){
+      return "<DIV style='color:green; text-align:right'>"+ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value) + '</DIV>';
+  }
+  function ListFormatter(row, cell, value, columnDef, dataContext, listarray){
+
+
   }
 })(jQuery);
