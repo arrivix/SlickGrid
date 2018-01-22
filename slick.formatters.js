@@ -18,7 +18,8 @@
         "YesNo": YesNoFormatter,
         "Checkmark": CheckmarkFormatter,
         "Checkbox": CheckboxFormatter,
-          "Monetic": MoneticFormatter
+        "Monetic": MoneticFormatter,
+        "List": ListFormatter
 
       }
     }
@@ -65,10 +66,20 @@
   }
 
   function MoneticFormatter(row, cell, value, columnDef, dataContext){
-      return "<DIV style='color:green; text-align:right'>"+ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value) + '</DIV>';
+      return "<DIV style='color:green; text-align:right'>"+ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value) + "</DIV>";
   }
-  function ListFormatter(row, cell, value, columnDef, dataContext, listarray){
 
+  function ListFormatter(row, cell, value, columnDef, dataContext){
+     Index=columnDef.list.map(function (element) {return element.ID;})
+          .indexOf(value);
+     if(columnDef.list[Index]!=undefined) {
 
+         return "<DIV >" + columnDef.list[Index]['TITLE'] + '</DIV>';
+     }
+     else
+     {
+         return "<DIV > ERREUR </DIV>";
+     }
   }
+
 })(jQuery);

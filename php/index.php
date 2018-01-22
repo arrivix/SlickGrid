@@ -10,7 +10,7 @@ require_once ('\config\db_action.php');
 $db = DB_action::get_instance();
 $result = $db -> get_db_select('ligne_compte',['ID(ID_ligne)', 'Fournisseur', 'Designation', 'Num_BC', 'Montant_HT', 'ID_ligne(Ligne)', 'Date_imputation(Date_imput)', 'Etat']);
 //print_r ($result);
-$json= json_encode($result);
+$json= json_encode($result, JSON_NUMERIC_CHECK);
 //echo $json;
 $a='<!DOCTYPE HTML>
 <html>

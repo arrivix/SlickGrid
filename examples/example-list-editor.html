@@ -272,7 +272,7 @@ grid.invalidateRow(5);
       return {valid: true, msg: null};
     }
   }
-  function validDateFormat(value){
+  function validDate(value){
   
   }
 	var lock =[4, 6	];
@@ -291,7 +291,7 @@ grid.invalidateRow(5);
     {id: "Montant_HT", name: "Montant HT", field: "Montant_HT", width: 80, resizable: false, editor: Slick.Editors.Integer, sortable: true},
     {id: "Ligne", name: "Ligne", field: "Ligne", minWidth: 60, editor: Slick.Editors.Integer,sortable: true},
 	{id: "Date_imput", name:"Date d'imputation", field: "Date_imput", minWidth: 60, editor: Slick.Editors.Date,sortable: true},
-    {id: "Etat", name: "Etat", field: "Etat", minWidth: 60, editor: Slick.Editors.Integer,sortable: true},
+    {id: "Etat", name: "Etat", field: "Etat", minWidth: 40, maxwidth: 40, editor: Slick.Editors.Integer,sortable: true},
   ];
   var options = {
     editable: true,
@@ -300,7 +300,7 @@ grid.invalidateRow(5);
     asyncEditorLoading: false,
     autoEdit: true,
 	forceFitColumns: true,
-	rowHeight: 25,
+		
 	multiColumnSort: true,
   };
 
@@ -338,6 +338,7 @@ for (var i = 0, j= lock.length; i<j; i++) {
 	
 	grid.onSort.subscribe(function (e, args) {
       var cols = args.sortCols;
+	  
       data.sort(function (dataRow1, dataRow2) {
         for (var i = 0, l = cols.length; i < l; i++) {
           var field = cols[i].sortCol.field;
