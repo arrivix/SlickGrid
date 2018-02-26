@@ -5,6 +5,11 @@
   font-size: 13pt;
 }
 
+.wrapper.invalid {
+    background: lightcyan;
+    border-color:  red;
+}
+
 body {
   background: beige;
   padding: 0;

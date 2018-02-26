@@ -115,10 +115,11 @@ classes should alter those!
 
 .slick-cell.invalid {
   border-color: red;
+  background: lightyellow;
   -moz-animation-duration: 0.2s;
   -webkit-animation-duration: 0.2s;
   -moz-animation-name: slickgrid-invalid-hilite;
-  -webkit-animation-name: slickgrid-invalid-hilite;  
+  -webkit-animation-name: slickgrid-invalid-hilite;
 }
 
 @-moz-keyframes slickgrid-invalid-hilite {

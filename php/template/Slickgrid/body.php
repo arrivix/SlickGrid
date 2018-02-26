@@ -148,7 +148,7 @@ var $List_array_etat =
                 {id: "Designation", name: "Désignation", field: "Designation", width: 150, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true, editable: true},
                 {id: "Fournisseur", name: "Fournisseur", field: "Fournisseur", width: 150, editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true, editable: true},
                 {id: "Num_BC", name: "N° de Bon de Commande", field: "Num_BC", editor: Slick.Editors.Reference, sortable: true, editable: true},
-                {id: "Montant_HT", name: "Montant HT", field: "Montant_HT", width: 80, resizable: false, editor: Slick.Editors.Monetic, formatter: Slick.Formatters.Monetic, sortable: true, editable: true},
+                {id: "Montant_HT", name: "Montant HT", field: "Montant_HT", width: 80, resizable: true, editor: Slick.Editors.Monetic, formatter: Slick.Formatters.Monetic, sortable: true, editable: true},
                 {id: "Ligne", name: "Ligne", field: "Ligne", list:$list_array_ligne_budget, editor: Slick.Editors.List,formatter: Slick.Formatters.List, minWidth: 220, sortable: true},
                 {id: "Date_imput", name:"Date d imputation", field: "Date_imput", minWidth: 100, editor: Slick.Editors.Date,sortable: true, editable: true},
                 {id: "Etat", name: "Etat", field: "Etat", minWidth: 60, editor: Slick.Editors.List, list:$List_array_etat, formatter: Slick.Formatters.List, sortable: true, editable: true}
@@ -168,10 +168,10 @@ var $List_array_etat =
             $(function () {
                 data='.
 $json.';
-                data.getItemMetadata = function (row) {
-                    if (typeof this[row] !== "undefined"){
+                dataView.getItemMetadata = function (row) {	
+					var item = dataView.getItem(row);
                         for (var i = 0, j= lock.length; i<j; i++) {
-                            if (this[row].ID_ligne == lock[i]){
+                            if (item.ID_ligne == lock[i]){
                                 return {
                                     cssClasses: "highlight"
 
@@ -179,7 +179,6 @@ $json.';
 
                             }
                         }
-                    }
                     return null;
 
                 }
