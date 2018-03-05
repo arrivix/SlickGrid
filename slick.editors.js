@@ -215,7 +215,7 @@
 
     this.serializeValue = function () {
       var rtn = parseFloat($input.val());
-	  alert('1: input: '+$input.val()+' parseFloat'+rtn)
+	 //alert('1: input: '+$input.val()+' parseFloat'+rtn)
       if (MoneticEditor.AllowEmptyValue) {
         if (!rtn && rtn !==0) { rtn = ''; }
       } else {
@@ -223,17 +223,17 @@
 		rtn = 0;
 		}
       }
-      	  alert('2: input: '+$input.val()+' parseFloat'+rtn)
+      	 //alert('2: input: '+$input.val()+' parseFloat'+rtn)
 
       var decPlaces = getDecimalPlaces();
-	  alert('3: input: '+$input.val()+' parseFloat'+rtn)
+	 //alert('3: input: '+$input.val()+' parseFloat'+rtn)
 
       if (decPlaces !== null
       && (rtn || rtn===0)
       && rtn.toFixed) {
         rtn = parseFloat(rtn.toFixed(decPlaces));
       }
-		alert(rtn);
+		//alert(rtn);
       return rtn;
     };
 
@@ -922,7 +922,11 @@
         var $input={};
         $input[0]={sel:'', inp:'', int:''};
         var defaultValue;
-        var scope = this;
+		var user_list=[];
+		var $tabIndex = 0;
+		var scope = this;
+		alert(args.
+		var $user_list_found= new Array();
         var $container = $("body");
         var $formatizer=
             {'B':
@@ -930,7 +934,61 @@
                     nom:'Bon de Commande',
                     short:'BC',
                     keycode:66,
-                option: {
+					option: {
+						condition: { 
+							1:{
+								column: ['Designation'],
+								value_begin: 'Salaire',
+								disponible: false
+							},
+							2:{
+								column: ['Designation'],
+								value_begin: 'Pré-Commande MC',
+								disponible: false
+							},
+							3:{
+								column: ['Designation'],
+								value_begin: 'Facture MC',
+								disponible: false
+							},
+							4:{
+								column: ['Designation'],
+								value_begin: 'Mission',
+								disponible: true,
+								required: false,
+								validation:true,
+								integer: true,
+								num_char_min: 6,
+								num_char_max:6,
+								block_validation:true,
+								unique: true
+							},
+							5:{
+								disponible: true,
+								required: true,
+								validation: true,
+								integer: true,
+								num_char_min: 6,
+								num_char_max:6,
+								integer: true,
+								block_validation:true,
+								unique: true	
+							}
+						},
+						construct_general: {
+									1:{
+									type: 'inp',
+									pre_str : '4500',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min: 6,
+										num_char_max:6,
+										block_validation:true,
+										required: true,}
+									}
+						},
+						
                         type1: 'inp',
                         integer: true,
                         num_char: 6,
@@ -941,7 +999,7 @@
 						block_validation:true,
                         required: true,
 						unique: true
-                      }
+                      },
               } ,
 
              'P':
@@ -952,6 +1010,47 @@
                 option:{
                     type1: 'inp',
                     type2: 'per',
+					condition : {
+							1:{
+								column: ['Designation'],
+								value_begin: 'Pré-Commande MC',
+								required: true,
+								validation: true,
+								integer: true,
+								num_char_min: 5,
+								num_char_max:5,
+								integer: true,
+								block_validation:true,
+							},
+							2:{
+								disponible: false
+							}
+							
+					},
+					construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'N° PMC:',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min:5,
+										num_char_max:5,
+										block_validation:false,
+										required: true,},
+									},
+									2:{
+									type: 'per',
+									pre_str: 'personne:',
+									validation: {
+										autocomplete:true,
+										liste: user_list,
+										restrict: true,
+										serialized_value: 'ID',
+										block_validation: true,
+										required: true,},
+									},
+						},
                     num_char: 5,
                     integer: true,
                     validation:true,
@@ -969,6 +1068,68 @@
                     option:{
                         type1: 'inp',
                         type2: 'per',
+						condition : {
+							1:{
+								column: ['Designation'],
+								value_begin: 'Salaire',
+								disponible: false
+							},
+							2:{
+								column: ['Designation'],
+								value_begin: 'Pré-Commande MC',
+								disponible: false
+							},
+							3:{
+								column: ['Designation'],
+								value_begin: 'Facture MC',
+								disponible: false
+							},
+							4:{
+								column: ['Designation'],
+								value_begin: 'Mission',
+								disponible: true,
+								required: true,
+								validation: true,
+								integer: true,
+								num_char_min: 5,
+								num_char_max:5,
+								integer: true,
+								block_validation:true,
+							},
+							5:{
+								disponible: true,
+								validation: true,
+								integer: true,
+								num_char_min: 5,
+								num_char_max:5,
+								integer: true,
+								block_validation:true
+							}
+						},
+						construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'N° OM:',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min:5,
+										num_char_max:5,
+										block_validation:true,
+										required: true,},
+									},
+									2:{
+									type: 'per',
+									pre_str: 'personne:',
+									validation: {
+										autocomplete:true,
+										liste: user_list,
+										restrict: true,
+										serialized_value: 'ID',
+										block_validation: true,
+										required: true,},
+									},
+						},
                         num_char: 5,
                         integer: true,
                         validation:true,
@@ -982,6 +1143,55 @@
                      short: 'Dev',
                      keycode:68,
                      option:{
+						 condition:{
+						 1:{
+								column: ['Designation'],
+								value_begin: 'Salaire',
+								disponible: false
+							},
+							2:{
+								column: ['Designation'],
+								value_begin: 'Pré-Commande MC',
+								disponible: false
+							},
+							3:{
+								column: ['Designation'],
+								value_begin: 'Facture MC',
+								disponible: false,
+								required: true,
+								validation: true,
+								integer: true,
+								block_validation:true,
+							},
+							4:{
+								disponible: false,
+								required: false,
+							}
+						 },
+						 construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'N° Devis:',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min:5,
+										num_char_max:5,
+										block_validation:true,
+										required: true,},
+									},
+									2:{
+									type: 'per',
+									pre_str: 'personne:',
+									validation: {
+										autocomplete:true,
+										liste: user_list,
+										restrict: true,
+										serialized_value: 'ID',
+										block_validation: true,
+										required: true,},
+									},
+						},
                          type1: 'inp',
                          type2: 'per',
                        }
@@ -994,6 +1204,27 @@
                     option: {
                         type1: 'desc',
                         type2: 'inp',
+						construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'Autre :',
+									post_str: '',
+									validation: {
+										block_validation:true,
+										required: true,},
+									},
+									2:{
+									type: 'per',
+									pre_str: 'personne:',
+									validation: {
+										autocomplete:true,
+										liste: user_list,
+										restrict: true,
+										serialized_value: 'ID',
+										block_validation: false,
+										required: false,},
+									},
+						},
                     }
               },
               'M':
@@ -1002,6 +1233,34 @@
                   short: 'FMC',
                   keycode: 77,
                   option:{
+					  condition:{
+							1:{
+								column: ['Designation'],
+								value_begin: 'Facture MC',
+								disponible: true,
+								required: true,
+								validation: true,
+								integer: true,
+								block_validation:true,
+							},
+							2:{
+								disponible: false,
+								required: false,
+							},
+						 },
+						 construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'Fact MC:',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min:6,
+										num_char_max:6,
+										block_validation:true,
+										required: true,},
+									},
+						},
                 type1: 'inp',
                       num_char:6,
                       integer:true,
@@ -1019,33 +1278,67 @@
                         option:{
                             type1: 'inp',
                             required:true,
-							unique: true
-                        }
+							unique: true,
+							construct_general:{
+									1:{
+									type: 'inp',
+									pre_str: 'N° Fact:',
+									post_str: '',
+									validation: {
+										integer:true,
+										num_char_min:5,
+										num_char_max:5,
+										block_validation:true,
+										required: true,},
+									},
+									2:{
+									type: 'per',
+									pre_str: 'personne:',
+									validation: {
+										autocomplete:true,
+										liste: user_list,
+										restrict: true,
+										serialized_value: 'ID',
+										block_validation: true,
+										required: true,},
+									},
+								},
+                        },
                     },
 
             };
-
+		
+		
         this.init = function () {
           //alert($formatizer[0]['type']) ;
           $wrapper = $("<DIV id='REF' style='z-index:10000; width:40%; position:absolute;background:white;padding:5px;border:3px solid gray; -moz-border-radius:10px; border-radius:10px;'/>")
                 .appendTo($container);
             $wrapper.width($(args.container).innerWidth()*3);
-
             this.construct('B',0);
             $input[0].inp.width($(args.container).innerWidth()*1.3*0.65);
-
-
             scope.position(args.position);
-            $input[0].sel.focus().select();
+					$.each(args.column.list, function (i){
+				scope.list(i);
+			})
+			$input[0].sel.focus().select();
+			
+			
+				
             $active_index=0;
         };
+		this.list = function(i) {
+			//alert('user_list '+user_list.join());
+				user_list.push(args.column.list[i]['CONCAT']);
+				//alert($user_list);
+				$user_list_found[args.column.list[i]['CONCAT']]=args.column.list[i]['ID'];
+		};
 
         this.construct= function ($type,$active_index){
 			var foc=undefined;
           //alert('on construit');
           if ($active_index===undefined) {
               if (isNaN($active_index)) {
-                  // alert($("#REF SELECT").length);
+                  //alert($("#REF SELECT").length);
                 if (isNaN($("#REF SELECT").length)||($("#REF SELECT").length===0)){
                     $active_index=0;
                 }else{
@@ -1063,9 +1356,11 @@
                 $input[$active_index][value].remove();
             }
           });
+		  if ($('#wp_row_id'+$active_index).lenght===undefined){
 		    $('<DIV id="wp_row_id'+$active_index + '" class="wrapper row id">').appendTo($wrapper);
+		  }
 			$type=this.sel_constructoption($active_index, $type);				
-			alert('type :'+$type);
+			//alert('type :'+$type);
 			//alert(a);
          // on ajoute les input.
             //alert("avant la boucle : "+$type);
@@ -1085,8 +1380,9 @@
                           }
                           else if($formatizer[value]['option']['type' + i] === 'inp')
                           {
+							  $tabIndex=$tabIndex+1;
                               $input[$active_index].int = $('<SPAN id="int_' + $active_index + '" class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
-                              $input[$active_index].inp = $('<INPUT id="inp_' + $active_index +'" class="wrapper row inp"></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].inp = $('<INPUT id="inp_' + $active_index +'" class="wrapper row inp tab"></INPUT>').appendTo($('#wp_row_id'+$active_index));
                               $input[$active_index].inp.width($(args.container).innerWidth()*1.3*0.65);
                               if($formatizer[value]['option']['pre_str']!=undefined) {
                                   $input[$active_index].int.text($formatizer[value]['option']['pre_str']);
@@ -1098,18 +1394,23 @@
                           }
                           else if($formatizer[value]['option']['type' + i] === 'desc')
                           {
+							  $tabIndex=$tabIndex+1;
                               $input[$active_index].int = $('<SPAN id="int_' + $active_index + '" class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
-                              $input[$active_index].desc = $('<INPUT id="desc_' + $active_index + '" class="wrapper row desc" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].desc = $('<INPUT id="desc_' + $active_index + '" class="wrapper row desc tab" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
                               $input[$active_index].desc.width($(args.container).innerWidth()*1.3*0.65);
 
                               temp="desc_" + $active_index;
                           }
                           else if($formatizer[value]['option']['type' + i] === 'per')
                           {
+							 $tabIndex=$tabIndex+1;
                               $input[$active_index].int = $('<SPAN id="int_' + $active_index + '"class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
-                              $input[$active_index].per = $('<INPUT id="per_' + $active_index + '"class="wrapper row per" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].per = $('<INPUT id="per_' + $active_index + '" class="wrapper row per tab" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
                               $input[$active_index].per.width($(args.container).innerWidth()*1.3*0.65);
-
+							 //alert('user list :'+user_list.join(""));	
+							  $("#per_"+$active_index).autocomplete({
+									source: user_list
+							  });
                               temp="per_" + $active_index;
                           }
                           i = i + 1;
@@ -1120,8 +1421,9 @@
                   }
               })
             }else{
+				$tabIndex=$tabIndex+1;
                 $input[$active_index].int = $('<SPAN id="int_' + $active_index + '"class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
-                $input[$active_index].inp = $('<INPUT id="inp_' + $active_index + '"class="wrapper row int"></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                $input[$active_index].inp = $('<INPUT id="inp_' + $active_index + '" class="wrapper row int tab"></INPUT>').appendTo($('#wp_row_id'+$active_index));
                 foc="sel_"+$active_index;
             }
 			
@@ -1129,10 +1431,10 @@
             //trigger event
             $("[id^=sel_]").keydown(this.SelhandleKeyDown);
             $("[id^=inp_]").keydown(this.InphandleKeyDown);
-					$("[id^=sel_]").change (this.Sel_change);
-
+			$("[id^=sel_]").change (this.Sel_change);
+			this.tab_indexer();
             //focus
-            if (foc!=undefined) {
+			if (foc!=undefined) {
                 $("#" + foc).focus().select();
             }else
             {
@@ -1140,23 +1442,152 @@
             }
         }
 
+		/*this.construct_b= function ($type,$active_index){
+			var foc=undefined;
+          //alert('on construit');
+          if ($active_index===undefined) {
+              if (isNaN($active_index)) {
+                  //alert($("#REF SELECT").length);
+                if (isNaN($("#REF SELECT").length)||($("#REF SELECT").length===0)){
+                    $active_index=0;
+                }else{
+                  $active_index = $("#REF SELECT").length - 1;
+                };
+              }
+          }
+          if ($input[$active_index]===undefined) {
+              $input[$active_index] = {};
+          }
+          // on enlève les autres $input.
+          $.each($input[$active_index],function (value) {
+            if (($input[$active_index][value]!=undefined)&&($input[$active_index][value]!=''))   {
+              //alert(value);
+                $input[$active_index][value].remove();
+            }
+          });
+		  if ($('#wp_row_id'+$active_index).lenght===undefined){
+		    $('<DIV id="wp_row_id'+$active_index + '" class="wrapper row id">').appendTo($wrapper);
+		  }
+			$type=this.sel_constructoption($active_index, $type);				
+			//alert('type :'+$type);
+			//alert(a);
+         // on ajoute les input.
+            //alert("avant la boucle : "+$type);
+            if ($type!=undefined){
+              esc=false;
+              $.each($formatizer, function(value) {
+                //alert("pendant la boucle value:"+value+ "la valeur tester est :"+$formatizer[value]['type']+"la valeur du type est :"+$type);
+                  if ((esc === false) && ($formatizer[value]['type'] === $type)) {
+                      esc = true;
+                      n = true;
+                      i = 1;
+                     //alert('format attention : '+$formatizer[value]['option']['type' + i]);
+                      //alert('lenght '+$formatizer[value]['option'].length);
+					  while ((n = true) && (i < 4)) {
+                          if ($formatizer[value]['option']['type' + i] === undefined) {
+                              n = false;
+                          }
+                          else if($formatizer[value]['option']['type' + i] === 'inp')
+                          {
+							  $tabIndex=$tabIndex+1;
+                              $input[$active_index].int = $('<SPAN id="int_' + $active_index + '" class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].inp = $('<INPUT id="inp_' + $active_index +'" class="wrapper row inp tab"></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].inp.width($(args.container).innerWidth()*1.3*0.65);
+                              if($formatizer[value]['option']['pre_str']!=undefined) {
+                                  $input[$active_index].int.text($formatizer[value]['option']['pre_str']);
+                              }
+
+
+                              temp="inp_" + $active_index;
+
+                          }
+                          else if($formatizer[value]['option']['type' + i] === 'desc')
+                          {
+							  $tabIndex=$tabIndex+1;
+                              $input[$active_index].int = $('<SPAN id="int_' + $active_index + '" class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].desc = $('<INPUT id="desc_' + $active_index + '" class="wrapper row desc tab" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].desc.width($(args.container).innerWidth()*1.3*0.65);
+
+                              temp="desc_" + $active_index;
+                          }
+                          else if($formatizer[value]['option']['type' + i] === 'per')
+                          {
+							 $tabIndex=$tabIndex+1;
+                              $input[$active_index].int = $('<SPAN id="int_' + $active_index + '"class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].per = $('<INPUT id="per_' + $active_index + '" class="wrapper row per tab" ></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                              $input[$active_index].per.width($(args.container).innerWidth()*1.3*0.65);
+							 //alert('user list :'+user_list.join(""));	
+							  $("#per_"+$active_index).autocomplete({
+									source: user_list
+							  });
+                              temp="per_" + $active_index;
+                          }
+                          i = i + 1;
+                          if ((foc===undefined)&&(temp!=undefined)){
+                            foc=temp;
+                          }
+                      }
+                  }
+              })
+            }else{
+				$tabIndex=$tabIndex+1;
+                $input[$active_index].int = $('<SPAN id="int_' + $active_index + '"class="wrapper row span"></SPAN>').appendTo($('#wp_row_id'+$active_index));
+                $input[$active_index].inp = $('<INPUT id="inp_' + $active_index + '" class="wrapper row int tab"></INPUT>').appendTo($('#wp_row_id'+$active_index));
+                foc="sel_"+$active_index;
+            }
+			
+
+            //trigger event
+            $("[id^=sel_]").keydown(this.SelhandleKeyDown);
+            $("[id^=inp_]").keydown(this.InphandleKeyDown);
+			$("[id^=sel_]").change (this.Sel_change);
+			this.tab_indexer();
+            //focus
+			if (foc!=undefined) {
+                $("#" + foc).focus().select();
+            }else
+            {
+                $("#sel_" + $("#REF > SELECT").length-1).focus().select();
+            }
+        }*/
+		
 		this.Sel_change = function(e){
 			$active_index=parseInt(e.target.id.substr(4,e.target.id.length));
 			anc_val=$input[$active_index].sel.val();
-			alert('ancienne valeur :'+anc_val);
+			//alert('ancienne valeur :'+anc_val);
 			$('#wp_row_id'+$active_index).remove();
 			//alert('ancienne valeur '+anc_val)
 			scope.construct(anc_val,$active_index) ;
 			//alert('ancienne valeur '+anc_val);
 			$("#sel_"+$active_index).val(anc_val);
+			//alert('changement de select');
 			$("#sel_"+$active_index).focus();
 			
 		}
+		
+		this.tab_indexer = function() {
+			i=1;
+			$.each($(".row.wrapper.tab"), function(value) {
+				//alert('alert :'+value);
+				$(".row.wrapper.tab:eq("+value+")").attr("tabindex",i);
+				i=i+1;
+			})
+		}
+		
+		this.condition = function($formatizer_short) {
+			$.each($formatizer_short['condition'], function(value){
+				if ($formatizer_short['condition'][value]!== undefined && $formatizer_short['condition'][value]['column'] !== undefined && $formatizer_short['condition'][value]['value_begin'] !==undefined) {
+				//lignes à compléter
+				}
+			});
+		}
+				
+		
 		this.sel_constructoption = function($active_index, $type) {
 			//alert('utilisation fonction construct');
 			//alert('active index : '+$active_index);
 			var first_viable_type= undefined;
-			a="<SELECT id='sel_"+$active_index+"'tabindex="+$active_index+" style= 'width:60px;height:20px;border:1px' class='wrapper row sel'>";
+			a="<SELECT id='sel_"+$active_index+"' style= 'width:60px;height:20px;border:1px' class='wrapper row sel tab'>";
           $.each($formatizer, function(value){
 			  //on test l'unicité
 			  if ($formatizer[value]['option']['unique']!== undefined && $formatizer[value]['option']['unique']==true){
@@ -1170,7 +1601,7 @@
 									  prev_used=1;
 									  if ($type ==$formatizer[value]['type']) {
 										  $type=undefined;
-										  alert('je supprime le type qui n existe plus');
+										 //alert('je supprime le type qui n existe plus');
 									  }
 									  //alert($formatizer[value]['nom']+' déjà utilisé!');
 								  }
@@ -1198,7 +1629,7 @@
 			$input[$active_index].sel=$(a).appendTo($('#wp_row_id'+$active_index));
 			if ($type==undefined){
 				$type=first_viable_type;
-				alert('le type est : '+$type);
+				//alert('le type est : '+$type);
 			}
 			$input[$active_index].sel.val($type);
 			return $type;
@@ -1216,7 +1647,7 @@
 
         this.SelhandleKeyDown =function (e){
             $active_index=parseInt(e.target.id.substr(4,e.target.id.length));
-			alert($active_index);
+			//alert($active_index);
             if (isNaN($active_index )){
                 $active_index = $("#REF SELECT").length-1;
                 }
@@ -1233,12 +1664,12 @@
             else if (e.which === 66){
                 $input[$active_index]['sel'].val('B');
                 $("#int_"+$active_index).text('4500');
-               // alert($("#inp_"+$active_index).val());
+               //alert($("#inp_"+$active_index).val());
                 if (($("#inp_"+$active_index).val() != undefined) && ($("#inp_"+$active_index).val !='')){
                     //alert($("#inp_"+$active_index).val().substring(0,4) );
 
                     if (($("#inp_"+$active_index).val().substring(0,4)=='4500')&&($("#inp_"+$active_index).val().length===10)){
-                       // alert($("#inp_"+$active_index).val()+ 'deuxième boucle'  );
+                       //alert($("#inp_"+$active_index).val()+ 'deuxième boucle'  );
 
                         $("#inp_"+$active_index).val($("#inp_"+$active_index).val().substring(4,10));
                     }
@@ -1250,7 +1681,7 @@
             else if (e.which === $.ui.keyCode.ESCAPE){
                 //alert($("#inp_"+$active_index).val());
               if((($("#inp_"+$active_index).val() === undefined) || ($("#inp_"+$active_index).val() ===''))&& ($active_index>0)) {
-                //  alert();
+                //alert();
                   $input[$active_index].inp.remove();
 				  $input[$active_index].int.remove();
                   $input[$active_index].sel.remove();
@@ -1269,7 +1700,7 @@
 
               }
 			  else {
-				  alert('Escape Inp vide');
+				 //alert('Escape Inp vide');
 				  $("#inp_"+$active_index).val('');
                   e.preventDefault();
                   scope.serializeValue();
@@ -1299,18 +1730,24 @@
             else if (e.which === $.ui.keyCode.ENTER) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-               // alert('entre');
+               //alert('entre');
                 if ($("#inp_" + $active_index) === undefined || $("#inp_" + $active_index) === '') {
-                 //   alert('cas ou c est vide');
+                 //  //alert('cas ou c est vide');
                 }
                 else {
-                   // alert('je fais ce que je veux');
+                   //alert('je fais ce que je veux');
                     scope.construct('B',$active_index+1) ;
                 }
             }
         };
             this.focus = function () {
+				if ($(".wrapper.row.invalid:first").length==undefined){
             $input[$active_index]['sel'].focus();
+			}
+			else{
+				$(".wrapper.row.invalid:first").focus();
+			}
+            
 
         };
 	
@@ -1323,7 +1760,7 @@
                 $input[0].inp.val($defaultValue.toString().substring(4, 10));
             } else {
                 $.each($defaultValue, function (value) {
-                 // alert('le type est : '+$defaultValue[value]['sel']);
+                 //alert('le type est : '+$defaultValue[value]['sel']);
                     scope.construct($defaultValue[value]['sel'], value);
                     $.each($defaultValue[value], function (value2) {
                       if ($input[value][value2]!=undefined){
@@ -1349,7 +1786,7 @@
 				if ($result[value]==undefined){
 					$result[value]={sel:'', inp:'', int:''};
 				}
-				alert('value 2:'+value2);
+				//alert('value 2:'+value2);
 				if (value2!=='int'){
 				$result[value][value2]=$input[value][value2].val();
 				}
@@ -1374,7 +1811,7 @@
         };
 
         this.new_reference = function(){
-         // alert('on passe à une nouvelle referece');
+         //alert('on passe à une nouvelle referece');
             $active_index=$active_index+1;
             //scope.applyValue();
             $input[$active_index]={sel:'', inp:'', int:''};
@@ -1413,14 +1850,48 @@
         this.validate = function () {
 		var escp=false;
 		var focus_first_invalidate=undefined;
-		$result=this.serializeValue;
+		//$result=this.serializeValue;
           $.each($input, function (value1){
 			  $.each($input[value1], function (value2){
-               // alert($input[value1][value2]+' on en est là : value 1='+value1+' et value2= '+value2);
+              scope.validate_row(value1, value2);
+            }
+		)
+	}
+            )
+			 {
+					if ($(".wrapper.row.invalid:first").length==undefined){
+           //alert('$(".wrapper.row.invalid" indéfini');
+			$input[0].sel.focus().select();
+			}
+			else{
+				//alert('changement de focus');
+				$(".wrapper.row.invalid:first").focus();
+			}
+
+
+            if (escp===false) {
+                return {
+                    valid: true,
+                    msg: null
+                }
+            }
+                else
+              return {
+                        valid: false,
+                        msg: "mauvais paramètre"
+
+                    }
+                }
+
+        };
+		
+		
+		this.validate_row = function (value1, value2) {
+			 //alert($input[value1][value2]+' on en est là : value 1='+value1+' et value2= '+value2);
 			   //alert('$input[value1].sel.val() :'+$input[value1].sel.val());
 			   if ($formatizer[$input[value1].sel.val()]['option']['required']==undefined || $formatizer[$input[value1].sel.val()]['option']['validation']!==false){
 					if (($input[value1][value2].val()=='' || $input[value1][value2].val()==undefined ) && (value2==='inp') && ($formatizer[$input[value1].sel.val()]['option']['required']==true)) {
-					  //  alert('non valide');
+					  //alert('non valide');
 					  if ($formatizer[$input[value1].sel.val()]['option']['block_validation']==undefined || $formatizer[$input[value1].sel.val()]['option']['block_validation']==true){
 						escp=true;
 					  }
@@ -1445,27 +1916,7 @@
 						$('#inp_'+value1).addClass("invalid");
 					}
 			   }
-            }
-		)
-	}
-            )
-
-
-            if (escp===false) {
-                return {
-                    valid: true,
-                    msg: null
-                }
-            }
-                else {
-              return {
-                        valid: false,
-                        msg: "mauvais paramètre"
-
-                    }
-                }
-
-        };
+		}
         this.cancel = function () {
             $input[$active_index]['inp'].val(defaultValue);
             if ($active_index===0) {

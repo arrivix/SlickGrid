@@ -12,11 +12,14 @@ $db = DB_action::get_instance();
 $result = $db -> get_db_select('ligne_compte',['ID(ID_ligne)', 'Fournisseur', 'Designation', 'Num_BC', 'Montant_HT', 'ID_ligne(Ligne)', 'Date_imputation(Date_imput)', 'Etat']);
 $list_array_ligne_budget = $db -> get_db_select('ligne_budget', ['ID', 'Nom(TITLE)']);
 $list_array_etat = $db -> get_db_select('etat', ['ID', 'Nom(TITLE)']);
-//print_r ($result);
+$list_user_1 = $db -> get_db_select('urafpa_concat', ['ID', 'Concat_nom_prenom(CONCAT)']);
+$list_user_2 = $db -> get_db_select('urafpa_concat', ['ID', 'Concat_prenom_nom(CONCAT)']);
+$list_user=array_merge($list_user_1, $list_user_2);
+//print_r ($list_user);
 $json= json_encode($result, JSON_NUMERIC_CHECK);
 $list_array_ligne_budget= json_encode($list_array_ligne_budget, JSON_NUMERIC_CHECK);
 $list_array_etat= json_encode($list_array_etat, JSON_NUMERIC_CHECK);
-
+$list_user= json_encode($list_user, JSON_NUMERIC_CHECK);
 $body='
     <body>
 
@@ -74,7 +77,7 @@ $body='
 
         <script src="../../../lib/firebugx.js"></script>
         <script src="../../../lib/jquery-3.2.1.js"></script>
-        <script src="../../../lib/jquery-ui-1.11.3.min.js"></script>
+        <script src="../../../lib/jquery-ui-1.12.1.min.js"></script>
         <script src="../../../lib/jquery.event.drag-2.3.0.js"></script>
         <script src="../../../slick.core.js"></script>
         <script src="../../../plugins/slick.cellrangedecorator.js"></script>
@@ -143,11 +146,20 @@ var $List_array_etat =
     $list_array_etat
 .
     ';
+var $List_urafpa_user =
+
+'
+
+.
+$list_user
+.
+';
+	
             var columns = [
                 {id: "ID_ligne", name: "ID", field: "ID_ligne", width: 30, cssClass: "cell-title", selectable: true, sortable: true, editable: false},
                 {id: "Designation", name: "Désignation", field: "Designation", width: 150, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true, editable: true},
                 {id: "Fournisseur", name: "Fournisseur", field: "Fournisseur", width: 150, editor: Slick.Editors.Text, validator: requiredFieldValidator, sortable: true, editable: true},
-                {id: "Num_BC", name: "N° de Bon de Commande", field: "Num_BC", editor: Slick.Editors.Reference, sortable: true, editable: true},
+                {id: "Num_BC", name: "N° de Bon de Commande", list:$List_urafpa_user, field: "Num_BC", editor: Slick.Editors.Reference, sortable: true, editable: true},
                 {id: "Montant_HT", name: "Montant HT", field: "Montant_HT", width: 80, resizable: true, editor: Slick.Editors.Monetic, formatter: Slick.Formatters.Monetic, sortable: true, editable: true},
                 {id: "Ligne", name: "Ligne", field: "Ligne", list:$list_array_ligne_budget, editor: Slick.Editors.List,formatter: Slick.Formatters.List, minWidth: 220, sortable: true},
                 {id: "Date_imput", name:"Date d imputation", field: "Date_imput", minWidth: 100, editor: Slick.Editors.Date,sortable: true, editable: true},
@@ -168,23 +180,18 @@ var $List_array_etat =
             $(function () {
                 data='.
 $json.';
-                dataView.getItemMetadata = function (row) {	
-					var item = dataView.getItem(row);
-                        for (var i = 0, j= lock.length; i<j; i++) {
-                            if (item.ID_ligne == lock[i]){
-                                return {
-                                    cssClasses: "highlight"
-
-                                };
-
-                            }
-                        }
-                    return null;
-
-                }
             dataView.setItems(data, "ID_ligne");
                 grid = new Slick.Grid("#myGrid", dataView, columns, options);
                 
+				dataView.onRowCountChanged.subscribe(function (e, args) {
+  grid.updateRowCount();
+  grid.render();
+});
+
+dataView.onRowsChanged.subscribe(function (e, args) {
+  grid.invalidateRows(args.rows);
+  grid.render();
+});
                 
                 grid.onSort.subscribe(function (e, args) { 
     cols = args.sortCols;
@@ -202,8 +209,11 @@ $json.';
         }
         return 0;
       });
-    grid.invalidate();
-    grid.setData(data);
+	  
+            dataView.setItems(data, "ID_ligne");
+
+    grid.invalidateRows();
+	grid.updateRowCount();
     grid.render();
 });
 
@@ -235,8 +245,22 @@ $json.';
 
             
             
-            
-            
+  
+            dataView.getItemMetadata = function (row) {	
+			//alert("row :"+row);
+					var item = dataView.getItem(row);
+                        for (var i = 0, j= lock.length; i<j; i++) {
+                            if (item.ID_ligne == lock[i]){
+                                return {
+                                    cssClasses: "highlight"
+
+                                };
+
+                            }
+                        }
+                    return null;
+
+                }
             
         </script>
 </body>

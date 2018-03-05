@@ -5,6 +5,13 @@
   font-size: 13pt;
 }
 
+.wrapper.row.id {
+    display: block;
+}
+
+div#REF {
+}
+
 .wrapper.invalid {
     background: lightcyan;
     border-color:  red;
@@ -191,7 +198,9 @@ input.editor-percentcomplete {
   display: none;
   overflow: visible;
 }
-
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+  z-index: 5001;
+}
 .editor-percentcomplete-wrapper {
   background: beige;
   padding: 20px 8px;
